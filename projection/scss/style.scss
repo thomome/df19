@@ -1,0 +1,17 @@
+canvas {
+  position:fixed;
+  transform: scale(-1, 1); 
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+video {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: scale(-1, 1);
+}

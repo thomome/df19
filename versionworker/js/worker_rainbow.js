@@ -8,6 +8,7 @@ const pts = [];
 let brush;
 let grd;
 let index = 0;
+let pos = [];
 
 onmessage = function(evt) {
   if(evt.data.type === 'init') {
@@ -28,10 +29,23 @@ onmessage = function(evt) {
     //takes from the objects' rect properties the first object
     const left = evt.data.rects[0].rect.left;
     const top = evt.data.rects[0].rect.top;
-    //pushes them into an array
-    pts.unshift([left, top, index]);
-    pts.splice(80);
-    index++;
+    pos[0] = left;
+    pos[1] = top;
+    pos[2] = index + 1;
+
+    let dist = Infinity;
+
+    if(pts.length > 0) {
+      const deltaX = left - pts[0][0];
+      const deltaY = top - pts[0][1];
+      dist = Math.sqrt( deltaX * deltaX + deltaY * deltaY );
+    }
+    if(dist > 100) {
+      //pushes them into an array
+      pts.unshift([left, top, index]);
+      pts.splice(30);
+      index++;
+    }
   }
 };
 
@@ -53,7 +67,6 @@ function loop() {
   grd.addColorStop(0.75, "#32D1FB");
   grd.addColorStop(1, "#1227FB");
 */
-let t = Date.now() * 0.0002;
 
   ctx.canvas.width = ctx.canvas.width;
 
@@ -61,18 +74,57 @@ let t = Date.now() * 0.0002;
   ctx.lineJoin = "round";
   ctx.strokeStyle = grd;
 
+  const pts2 = pts.slice(0);
+  pts2.unshift(pos);
 
-  for(let i = 0; i < pts.length -1; i++) {
+  const t = Date.now() * 0.0002;
 
+  for(let i = 0; i < pts2.length -1; i++) {
+    const index = pts2[i][2];
 
-    const p = pts[i];
-    const n = pts[i + 1];
-    const noise = (simplex.noise2D(0, p[2] * 0.08))*20 + 20;
+    const noise = (simplex.noise2D(0, index * 0.08))*6 + 20;
+    const noiseX = (simplex.noise2D(0, t * pindex * 0.08)) * 0.1;
+    const noiseY = (simplex.noise2D(20, t * index * 0.08)) * 0.1;
+
+    const prev = pts2[i - 1];
+    const cur1 = pts2[i];
+    const cur2 = pts2[i + 1];
+    const next = pts2[i + 2];
+    cur1[0] += noiseX;
+    cur1[1] += noiseY;
+
+    let hdl1;
+    let hdl2;
+
+    if(prev) {
+      const vec1 = [ prev[0] - cur1[0], prev[1] - cur1[1] ];
+      const vec2 = [ cur1[0] - cur2[0], cur1[1] - cur2[1] ];
+      const vecAvg = [ (vec1[0] + vec2[0]) / 2, (vec1[1] + vec2[1]) / 2 ];
+      const vec = [ vecAvg[0] / 2, vecAvg[1] / 2 ];
+      hdl1 = [ cur1[0] - vec[0], cur1[1] - vec[1] ];
+    } else {
+      hdl1 = cur1;
+    }
+
+    if(next) {
+      const vec1 = [ next[0] - cur2[0], next[1] - cur2[1] ];
+      const vec2 = [ cur2[0] - cur1[0], cur2[1] - cur1[1] ];
+      const vecAvg = [ (vec1[0] + vec2[0]) / 2, (vec1[1] + vec2[1]) / 2 ];
+      const vec = [ vecAvg[0] / 2, vecAvg[1] / 2 ];
+      hdl2 = [ cur2[0] - vec[0], cur2[1] - vec[1] ];
+    } else {
+      hdl2 = cur2;
+    }
 
     ctx.beginPath();
-    ctx.moveTo(n[0], n[1])
-    ctx.lineTo(p[0], p[1], n[0], n[1])
-    //ctx.arc(p[0],p[1],radius,0,Math.PI*2);
+    //ctx.moveTo(n[0], n[1])
+    //ctx.lineTo(p[0], p[1], n[0], n[1])
+
+    // Cubic Bézier curve
+    ctx.moveTo(cur1[0], cur1[1])
+    ctx.bezierCurveTo(hdl1[0], hdl1[1], hdl2[0], hdl2[1],  cur2[0], cur2[1]);
+
+
     ctx.lineWidth = noise;
 ctx.stroke();
 

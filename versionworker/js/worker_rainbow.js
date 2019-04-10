@@ -83,7 +83,7 @@ function loop() {
     const index = pts2[i][2];
 
     const noise = (simplex.noise2D(0, index * 0.08))*6 + 20;
-    const noiseX = (simplex.noise2D(0, t * pindex * 0.08)) * 0.1;
+    const noiseX = (simplex.noise2D(0, t * index * 0.08)) * 0.1;
     const noiseY = (simplex.noise2D(20, t * index * 0.08)) * 0.1;
 
     const prev = pts2[i - 1];

@@ -25,8 +25,27 @@ const effects = {
               type: 'init'
           }, [effect.offscreen]);
       } // end init function
-
-  } // end rainbow
+},
+  'stars': {
+  worker: null,
+  offscreen: null,
+  init: (effect) => {
+        effect.worker.postMessage({
+            canvas: effect.offscreen,
+            type: 'init'
+        }, [effect.offscreen]);
+    } // end init function
+},
+  'astronaut': {
+worker: null,
+offscreen: null,
+init: (effect) => {
+      effect.worker.postMessage({
+          canvas: effect.offscreen,
+          type: 'init'
+      }, [effect.offscreen]);
+  } // end init function
+},
 }; // end const effects
 
 

@@ -1,6 +1,16 @@
 // 1°   Video settings to pass: Prefer camera resolution nearest to 1280x720.
 
-var constraints = { audio: false, video: { width: 800, height: 600 } };
+var constraints = {
+  audio: false,
+  video: {
+    width: 1280,
+    height: 720,
+    frameRate: {
+      ideal: 60, 
+      min: 30
+    }
+  }
+};
 
 
 

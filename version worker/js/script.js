@@ -1,99 +1,63 @@
-
-// WORKER
-
-
-for(let i = 0; i < 1; i++) {
-  const Auroracanvas = document.createElement('canvas');
-  Auroracanvas.width =  window.innerWidth;
-  Auroracanvas.height = window.innerHeight;
-  document.body.appendChild(Auroracanvas);
-  const offscreen = Auroracanvas.transferControlToOffscreen();
-  const worker = new Worker("js/aurora.js");
-
-  worker.postMessage({ Auroracanvas: offscreen, type: 'init' }, [ offscreen ])
-
-
-  // EVENT LISTENER
-  window.addEventListener('click', () => {
-    worker.postMessage({ rects: [], type: 'track' })
-  })
-}
-
-
-
-/*
-
-// VARIABLES
-
-
-
-let mode = 'draw';
-let lastX = 0;
-let lastY = 0;
-
-let x = 0;
-let y = 0;
-let r = 0;
-
-
-let auroraBrush;
-
-
-// init
-
-function init() {
-  onPlayVideo();
-
-}
-
-function setup(){
-
-
-  createCanvas(windowWidth, windowHeight);
-
-  const colors = new tracking.ColorTracker(["yellow", "magenta"]);
-  colors.on("track", function(event) {
-    if(event.data.length !== 0) {
-      event.data.forEach(function(rect) {
-        if(rect.color === 'yellow') {
-          mode = 'draw';
-
-        } else {
-          mode = 'delete';
-        }
-        x = rect.x;
-        y = rect.y;
-        r = (rect.width + rect.height) / 4;
-
-      });
+const effects = {
+  'aurora': {
+    worker: null,
+    offscreen: null,
+    init: (effect) => {
+      const img = document.createElement('img');
+      img.addEventListener('load', () => {
+          createImageBitmap(img).then((bitmap) => {
+              effect.worker.postMessage({
+                  img: bitmap,
+                  canvas: effect.offscreen,
+                  type: 'init'
+              }, [effect.offscreen])
+          });
+      })//event listener
+      img.src = './assets/aurora4.png';
     }
-  });
+  },
+  'rainbow': {
+    worker: null,
+    offscreen: null,
+    init: (effect) => {
+          effect.worker.postMessage({
+              canvas: effect.offscreen,
+              type: 'init'
+          }, [effect.offscreen]);
+      } // end init function
+
+  } // end rainbow
+}; // end const effects
 
 
-  tracking.track(video, colors);
-  auroraBrush = new AuroraBrush(300,300);
+for(let effect in effects) {
+  const canvas = document.createElement('canvas');
+  canvas.width =  window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
 
+  effects[effect].offscreen = canvas.transferControlToOffscreen();
+  effects[effect].worker = new Worker(`js/worker_${effect}.js`);
+  effects[effect].init(effects[effect])
 }
 
 
-// draw
 
-function draw() {
-clear();
+// EVENT LISTENER
 
 
-  if(mode === 'draw') {
-    //use method parameters to push new position, maybe they need to be way smaller!!
-    auroraBrush.show();
-    auroraBrush.x=lastX;
-    auroraBrush.y=lastY;
-    auroraBrush.update();
+window.addEventListener('mousemove', (e) => {
+  const rect = {
+    color: 'yellow',
+    rect: {
+      top: e.pageY,
+      left: window.innerWidth - e.pageX,
+      bottom: e.pageY,
+      right: e.pageX
+    }
+  };
 
-  } else {
-    clear(x, y, r, r);
+  for(let effect in effects) {
+    effects[effect].worker.postMessage({ rects: [rect], type: 'track' })
   }
-
-  lastX = x;
-  lastY = y;
-
-} */
+})

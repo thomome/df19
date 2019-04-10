@@ -1,0 +1,144 @@
+<html>
+      <head>
+        <meta charset="UTF-8">
+        <title>NativeCanvas.md</title>
+      </head>
+      <body>
+        <h1 id="native-canvas">Native Canvas</h1>
+<h2 id="aurora-brush">Aurora Brush</h2>
+<p>Load Image</p>
+<pre><code class="lang-javascript">let img = new Image();
+img.src =
+  &quot;https://s3-us-west-2.amazonaws.com/s.cdpn.io/2484857/direction%20sprite.png&quot;;
+img.onload = function() {
+  window.requestAnimationFrame(gameLoop);
+};
+</code></pre>
+<p>Call the canvas</p>
+<pre><code class="lang-javascript">var canvas = document.querySelector(&quot;canvas&quot;);
+canvas.width = window.innerWidth;;
+canvas.height = window.innerHeight;
+let ctx = canvas.getContext(&quot;2d&quot;);
+</code></pre>
+<h1 id="web-workers">Web workers</h1>
+<p> Web Workers allow you to do things like fire up long-running scripts to handle computationally intensive tasks, but without blocking the UI or other scripts to handle user interactions.</p>
+<p>1) create a canvas and send them to off screen</p>
+<pre><code class="lang-javascript">const offscreen = canvas.transferControlToOffscreen();
+</code></pre>
+<p>2) create a worker</p>
+<pre><code class="lang-javascript">var worker = new Worker(&#39;task.js&#39;);
+</code></pre>
+<p>3) After creating the worker, start it by calling the postMessage() method:</p>
+<pre><code class="lang-javascript">worker.postMessage(); // Start the worker.
+</code></pre>
+<p>4) The magic of workers happens via the <strong>postMessage()</strong> method and the <strong>onmessage</strong> event handler. When you want to send a message to the worker, you post messages to it like this (main.js):
+passing an image to a workers</p>
+<pre><code class="lang-javascript">first.onchange = function() {
+  myWorker.postMessage([first.value,second.value]);
+  console.log(&#39;Message posted to worker&#39;);
+}
+
+second.onchange = function() {
+  myWorker.postMessage([first.value,second.value]);
+  console.log(&#39;Message posted to worker&#39;);
+}
+</code></pre>
+<p>In the worker, we can respond when the message is received by writing an <strong>event handler</strong> block</p>
+<pre><code class="lang-javascript">onmessage = function(e) {
+  console.log(&#39;Message received from main script&#39;);
+  var workerResult = &#39;Result: &#39; + (e.data[0] * e.data[1]);
+  console.log(&#39;Posting message back to main script&#39;);
+  postMessage(workerResult);
+}
+</code></pre>
+<p>Back in the <strong>main thread</strong>, we use <strong>onmessage</strong> again, to respond to the message sent back from the worker:</p>
+<pre><code class="lang-javascript">myWorker.onmessage = function(e) {
+  result.textContent = e.data;
+  console.log(&#39;Message received from worker&#39;);
+}
+</code></pre>
+<p>Worker threads have access to a global function, importScripts(), which lets them import scripts.</p>
+<pre><code class="lang-javascript">importScripts();                         /* imports nothing */
+importScripts(&#39;foo.js&#39;);                 /* imports just &quot;foo.js&quot; */
+importScripts(&#39;foo.js&#39;, &#39;bar.js&#39;);       /* imports two scripts */
+importScripts(&#39;//example.com/hello.js&#39;); /* You can import scripts from other origins */
+</code></pre>
+<h2 id="passing-pictures-into-workers">Passing Pictures into Workers</h2>
+<p>create image in the DOM</p>
+<pre><code class="lang-javascript">const img = document.createElement(&#39;img&#39;);
+</code></pre>
+<p>create event listener once it loads</p>
+<pre><code class="lang-javascript">
+img.addEventListener(&#39;load&#39;, () =&gt; {
+    createImageBitmap(img).then((bitmap) =&gt; {
+        worker.postMessage({
+            img: bitmap,
+            canvas: offscreen,
+            // specify the type to control the event
+            type: &#39;init&#39;
+        }, [offscreen])
+    });
+})
+// crossOrigin when the img is from an outside source: unsplash
+img.crossOrigin = &#39;anonymous&#39;;
+img.src = &#39;./assets/aurora4.png&#39;;
+</code></pre>
+<h2 id="passing-x-y-from-tracking">Passing X,Y from tracking</h2>
+<p>Event listener for the positioning</p>
+<pre><code class="lang-javascript">// EVENT LISTENER
+window.addEventListener(&#39;mousemove&#39;, (e) =&gt; {
+  const rect = {
+    color: &#39;yellow&#39;,
+    rect: {
+      top: e.pageY,
+      left: window.innerWidth - e.pageX,
+      bottom: e.pageY,
+      right: e.pageX
+    }
+  };
+  // specify the type to track
+  worker.postMessage({ rects: [rect], type: &#39;track&#39; })
+})
+</code></pre>
+<h2 id="worker-receiving-stuff-from-the-main-script">Worker: Receiving stuff from the main script</h2>
+<p>declare the variables that you will receive</p>
+<pre><code class="lang-javascript">let canvas;
+let ctx;
+let img;
+const pts = [];
+</code></pre>
+<p>if statement to differentiate between the posted messages</p>
+<pre><code class="lang-javascript">onmessage = function(evt) {
+  if(evt.data.type === &#39;init&#39;) {
+    canvas = evt.data.canvas;
+    ctx = canvas.getContext(&quot;2d&quot;);
+    img = evt.data.img;
+    // once the data is loaded the loop/draw function is fired
+    loop();
+
+  } else if(evt.data.type === &#39;track&#39;){
+    const left = evt.data.rects[0].rect.left;
+    const top = evt.data.rects[0].rect.top;
+    //sends the points into the array pts
+    pts.unshift([left, top]);
+    pts.splice(200);
+  }
+};
+</code></pre>
+<p>load these data into the drawing script</p>
+<pre><code class="lang-javascript">function loop() {
+
+  for(let i = 0; i &lt; pts.length; i++) {
+    const p = pts[i]
+    ctx.drawImage(img, p[0] - img.width / 2, p[1] - img.height / 2)
+  }
+
+  requestAnimationFrame(loop);
+};
+
+</code></pre>
+<h2 id="noise-and-linear-interpolation">Noise and Linear Interpolation</h2>
+<h2 id="rainbow">Rainbow</h2>
+
+      </body>
+    </html>

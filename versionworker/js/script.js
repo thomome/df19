@@ -61,6 +61,16 @@ for(let effect in effects) {
 }
 
 
+// THREE JS?
+
+/*
+
+renderer = new THREE.WebGLRenderer({antialias:true, canvas:offscreen});
+renderer.setPixelRatio(devicePixelRatio);
+renderer.setSize( canvas.width, canvas.height);
+*/
+
+
 
 // EVENT LISTENER
 

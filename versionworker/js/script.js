@@ -29,7 +29,7 @@ const effects = {
     color: {
       name: 'magenta',
       threshold: 50,
-      color: [255, 0, 255]
+      color: [219, 28, 110]
     },
     init: (effect) => {
           effect.worker.postMessage({

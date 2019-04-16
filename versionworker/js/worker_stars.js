@@ -5,16 +5,19 @@ const particles = [];
 let globalIndex = 0;
 
 
-const lifeTime = 0.001;
-const starSize = 10;
+const lifeTime = 0.005;
+const starSize = 4;
 const distanceStars = 100;
 const minDistanceStars = 70;
+
+const killSpeed = 0.005;
+//3000 / 60
 
 function add(x, y) {
   const t = Date.now() * 0.001;
   //const starNoise = (simplex.noise2D(0, t)) * 0.25;
-  const starNoise = Math.floor(Math.random() * 8);
-  const star = starSize - starNoise;
+  const starNoise = Math.round((Math.random() - 0.5) * 4);
+  const star = starSize + starNoise;
   particles.push({ x: x, y: y, s: star, i: globalIndex })
   globalIndex++;
 }
@@ -150,7 +153,7 @@ for(let i = 0; i < particles.length; i++) {
     linkSums[i] = linkSums[i] ? linkSums[i] + 1 : 1;
     linkSums[j] = linkSums[j] ? linkSums[j] + 1 : 1;
 
-    let weight = map(dist, minDistanceStars, distanceStars, 0.25, 1.5);
+    let weight = map(dist, minDistanceStars, distanceStars, 1.5, 0);
 
       ctx.beginPath();
       ctx.lineWidth = weight;
@@ -165,6 +168,9 @@ for(let i = 0; i < particles.length; i++) {
 }
 
 
+// i am not sure how to revert this back to a normal loop
+//for(let i = 0; i < particles.length; i++){
+//const p = particles[i];
 
 particles.forEach((p, i) => {
   if(!linkSums[i] || linkSums[i] < 2) {

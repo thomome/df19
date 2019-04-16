@@ -41,8 +41,18 @@ worker: null,
 offscreen: null,
 init: (effect) => {
       effect.worker.postMessage({
+
+          // set the size for threejs
+
+          // should I repeat this?
           canvas: effect.offscreen,
-          type: 'init'
+          type: 'init',
+
+          // effect.offscreen.style = {width : 0, height : 0},
+          // where do you fire these functions?
+          //renderer = new THREE.WebGLRenderer( { antialias: true, canvas: effect.offscreen } );
+          //renderer.setSize( canvas.width, canvas.height );
+
       }, [effect.offscreen]);
   } // end init function
 },
@@ -61,14 +71,7 @@ for(let effect in effects) {
 }
 
 
-// THREE JS?
 
-/*
-
-renderer = new THREE.WebGLRenderer({antialias:true, canvas:offscreen});
-renderer.setPixelRatio(devicePixelRatio);
-renderer.setSize( canvas.width, canvas.height);
-*/
 
 
 

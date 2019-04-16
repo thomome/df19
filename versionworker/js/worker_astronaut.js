@@ -1,16 +1,37 @@
-/*importScripts('three.min.js');
+importScripts("three.min.js");
+
+let canvas;
+
+onmessage = function(evt) {
+  if(evt.data.type === 'init') {
+    canvas = evt.data.canvas;
+
+    init();
+
+  }
+
+  else if(evt.data.type === 'track'){
+    const rect = evt.data.rects[0].rect;
+
+    //takes from the objects' rect properties the first object
+    const x = rect.left;
+    const y = rect.top;
+      }
+
+
+}; // end on message
+
+
 
 
 var camera, scene, renderer;
 var geometry, material, mesh;
 
 
-init();
-animate();
 
 function init() {
 
-	camera = new THREE.PerspectiveCamera( 70, 700 / 700, 0.01, 10 );
+	camera = new THREE.PerspectiveCamera( 45, 1280 / 720, 0.001, 10 );
 	camera.position.z = 1;
 
 	scene = new THREE.Scene();
@@ -21,10 +42,9 @@ function init() {
 	mesh = new THREE.Mesh( geometry, material );
 	scene.add( mesh );
 
-	renderer = new THREE.WebGLRenderer( { antialias: true } );
-	renderer.setSize( 700, 700 );
-	document.body.appendChild( renderer.domElement );
+  renderer = new THREE.WebGLRenderer( { canvas: canvas, alpha:true, antialias: true } );
 
+  animate();
 }
 
 function animate() {
@@ -37,4 +57,3 @@ function animate() {
 	renderer.render( scene, camera );
 
 }
-*/

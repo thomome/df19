@@ -5,12 +5,12 @@ const particles = [];
 let globalIndex = 0;
 
 
-const lifeTime = 0.005;
-const starSize = 4;
+const lifetime = 3000;
+const starSize = 3;
 const distanceStars = 100;
-const minDistanceStars = 70;
+const minDistanceStars = 50;
 
-const killSpeed = 0.005;
+const killSpeed = starSize * 60 / lifetime;
 //3000 / 60
 
 function add(x, y) {
@@ -174,7 +174,7 @@ for(let i = 0; i < particles.length; i++) {
 
 particles.forEach((p, i) => {
   if(!linkSums[i] || linkSums[i] < 2) {
-    particles[i].s -= lifeTime;
+    particles[i].s -= killSpeed;
     if(particles[i].s <= 0) {
       particles.splice(i, 1);
     }

@@ -7,7 +7,7 @@ const effects = {
     color: {
       name: 'yellow',
       threshold: 50,
-      color: [255, 230, 78]
+      color: [191, 152, 40]
     },
     init: (effect) => {
       const img = document.createElement('img');
@@ -41,6 +41,11 @@ const effects = {
   'stars': {
   worker: null,
   offscreen: null,
+  color: {
+    name: 'blue',
+    threshold: 50,
+    color: [55, 161, 195]
+  },
   init: (effect) => {
         effect.worker.postMessage({
             canvas: effect.offscreen,
@@ -101,7 +106,8 @@ function initTracker() {
 
   // init color tracker and connect to video
   const tracker = new ColorTracker(video, {
-    fps: 60
+    fps: 60,
+    resolution: 100
   });
 
   for(let effect in effects) {
@@ -129,7 +135,9 @@ function initTracker() {
     for(let effect in effects) {
       if(effects[effect].color) {
         const filteredRects = rects.filter((rect) => rect.color === effects[effect].color.name);
-        effects[effect].worker.postMessage({ rects: filteredRects, type: 'track' })
+        if(filteredRects.length > 0) {
+          effects[effect].worker.postMessage({ rects: filteredRects, type: 'track' })
+        }
       }
     }
 

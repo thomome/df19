@@ -7,7 +7,7 @@ const effects = {
     color: {
       name: 'yellow',
       threshold: 50,
-      color: [171, 144, 26]
+      color: [191, 153, 37]
     },
     init: (effect) => {
       const img = document.createElement('img');
@@ -29,7 +29,7 @@ const effects = {
     color: {
       name: 'magenta',
       threshold: 50,
-      color: [151, 66, 79]
+      color: [184, 89, 119]
     },
     init: (effect) => {
           effect.worker.postMessage({
@@ -44,7 +44,7 @@ const effects = {
   color: {
     name: 'blue',
     threshold: 50,
-    color: [26, 90, 138]
+    color: [64, 126, 174]
   },
   init: (effect) => {
         effect.worker.postMessage({
@@ -52,7 +52,7 @@ const effects = {
             type: 'init'
         }, [effect.offscreen]);
     } // end init function
-},
+}/*,
   'astronaut': {
 worker: null,
 offscreen: null,
@@ -72,7 +72,7 @@ init: (effect) => {
 
       }, [effect.offscreen]);
   } // end init function
-},
+},*/
 }; // end const effects
 
 

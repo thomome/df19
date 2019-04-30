@@ -25,8 +25,8 @@ onmessage = function(evt) {
     ctx = canvas.getContext("2d");
     // sets here that the image comes from the data sent
     img = evt.data.img;
-    w = img.width;
-    h = img.height * 2;
+    w = img.width / 2;
+    h = img.height;
     loop();
 
   } else if(evt.data.type === 'track'){
@@ -44,7 +44,7 @@ onmessage = function(evt) {
     }
     pts.unshift([left, top, index]);
     index++;
-    pts.splice(600);
+    pts.splice(400);
   }
 };
 

@@ -6,7 +6,7 @@ const effects = {
     offscreen: null,
     color: {
       name: 'yellow',
-      threshold: 50,
+      threshold: 30,
       color: [191, 153, 37]
     },
     init: (effect) => {
@@ -28,7 +28,7 @@ const effects = {
     offscreen: null,
     color: {
       name: 'magenta',
-      threshold: 50,
+      threshold: 30,
       color: [51, 113, 95]
     },
     init: (effect) => {
@@ -43,7 +43,7 @@ const effects = {
   offscreen: null,
   color: {
     name: 'blue',
-    threshold: 50,
+    threshold: 30,
     color: [64, 126, 174]
   },
   init: (effect) => {

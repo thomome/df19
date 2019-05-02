@@ -1,5 +1,3 @@
-
-
 importScripts('simplenoise.js');
 
 let canvas;
@@ -7,6 +5,7 @@ let ctx;
 const pts = [];
 let brush;
 let grd;
+let pat;
 let index = 0;
 let pos = [];
 
@@ -22,6 +21,8 @@ onmessage = function(evt) {
     grd.addColorStop(0.5, "#F1279F");
     grd.addColorStop(0.75, "#32D1FB");
     grd.addColorStop(1, "#1227FB");
+
+		pat = ctx.createPattern(evt.data.img, "no-repeat");
 
     loop();
 
@@ -49,30 +50,18 @@ onmessage = function(evt) {
   }
 };
 
+let posgrd = 0;
+let dir = 5;
 
-  let posgrd = 0;
-  let dir = 5;
-
-  const simplex = new SimplexNoise();
+const simplex = new SimplexNoise();
 
 
 function loop() {
-
-  /*posgrd+=dir;
-  if (posgrd > canvas.width || posgrd < 0){ dir *=-1;}
-  var grd = ctx.createLinearGradient(posgrd, posgrd, canvas.width, canvas.height);
-  grd.addColorStop(0, "#FDC82E");
-  grd.addColorStop(0.25, "#FC361E");
-  grd.addColorStop(0.5, "#F1279F");
-  grd.addColorStop(0.75, "#32D1FB");
-  grd.addColorStop(1, "#1227FB");
-*/
-
   ctx.canvas.width = ctx.canvas.width;
 
-  ctx.lineCap = "round";
-  ctx.lineJoin = "round";
-  ctx.strokeStyle = grd;
+	ctx.lineCap = "round";
+	ctx.lineJoin = "round";
+	ctx.strokeStyle = pat;
 
   const pts2 = pts.slice(0);
   pts2.unshift(pos);
@@ -82,7 +71,7 @@ function loop() {
   for(let i = 0; i < pts2.length -1; i++) {
     const index = pts2[i][2];
 
-    const noise = (simplex.noise2D(0, index * 0.08))*6 + 20;
+    const noise = (simplex.noise2D(0, index * 0.08))*6 + 30;
     const noiseX = (simplex.noise2D(0, t * index * 0.08)) * 0.1;
     const noiseY = (simplex.noise2D(20, t * index * 0.08)) * 0.1;
 
@@ -117,19 +106,12 @@ function loop() {
     }
 
     ctx.beginPath();
-    //ctx.moveTo(n[0], n[1])
-    //ctx.lineTo(p[0], p[1], n[0], n[1])
-
-    // Cubic Bézier curve
     ctx.moveTo(cur1[0], cur1[1])
     ctx.bezierCurveTo(hdl1[0], hdl1[1], hdl2[0], hdl2[1],  cur2[0], cur2[1]);
 
-
     ctx.lineWidth = noise;
-ctx.stroke();
-
+		ctx.stroke();
   }
-
 
   requestAnimationFrame(loop);
 };

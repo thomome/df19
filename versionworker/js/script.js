@@ -12,14 +12,14 @@ const effects = {
     init: (effect) => {
       const img = document.createElement('img');
       img.addEventListener('load', () => {
-          createImageBitmap(img).then((bitmap) => {
-              effect.worker.postMessage({
-                  img: bitmap,
-                  canvas: effect.offscreen,
-                  type: 'init'
-              }, [effect.offscreen])
-          });
-      })//event listener
+        createImageBitmap(img).then((bitmap) => {
+          effect.worker.postMessage({
+            img: bitmap,
+            canvas: effect.offscreen,
+            type: 'init'
+          }, [effect.offscreen])
+        });
+      });
       img.src = './assets/aurora4.png';
     }
   },
@@ -27,32 +27,39 @@ const effects = {
     worker: null,
     offscreen: null,
     color: {
-      name: 'magenta',
-      threshold: 30,
-      color: [51, 113, 95]
+			name: 'magenta',
+			threshold: 30,
+			color: [51, 113, 95]
     },
     init: (effect) => {
+			const img = document.createElement('img');
+      img.addEventListener('load', () => {
+        createImageBitmap(img).then((bitmap) => {
           effect.worker.postMessage({
-              canvas: effect.offscreen,
-              type: 'init'
-          }, [effect.offscreen]);
-      } // end init function
-},
-  'stars': {
-  worker: null,
-  offscreen: null,
-  color: {
-    name: 'blue',
-    threshold: 30,
-    color: [64, 126, 174]
-  },
-  init: (effect) => {
-        effect.worker.postMessage({
+            img: bitmap,
             canvas: effect.offscreen,
             type: 'init'
-        }, [effect.offscreen]);
-    } // end init function
-}/*,
+          }, [effect.offscreen])
+        });
+      });
+      img.src = './assets/rainbow.jpg';
+    }
+	},
+	'stars': {
+		worker: null,
+		offscreen: null,
+		color: {
+	    name: 'blue',
+	    threshold: 30,
+	    color: [64, 126, 174]
+	  },
+	  init: (effect) => {
+      effect.worker.postMessage({
+        canvas: effect.offscreen,
+        type: 'init'
+      }, [effect.offscreen]);
+    }
+	}/*,
   'astronaut': {
 worker: null,
 offscreen: null,
@@ -221,35 +228,22 @@ function initTracker() {
   })
 
 
-    document.addEventListener("keyup", function(event) {
-      // older browsers might use keyCode instead of key
-      var key = event.key || event.keyCode;
-      // put all possible fallback
-      if (key === "2" || key === "Digit2" || key === 50) {
-
-        target1 = [243, 82, 13];
-        target2 = [31, 45, 3];
-      }
-    });
-
-
-
     var circleIndex = 0;
     var circle = [
       {
-        lightTone: [0, 193, 251],
-        darkTone: [104, 40, 227]
+        lightTone: [34,226,181],
+        darkTone: [18,49,142]
       },
 
       {
-        lightTone: [243, 82, 113],
-        darkTone: [31, 45, 93]
+        lightTone: [0,203,246],
+        darkTone: [0,58,79]
       },
 
       {
-        lightTone: [99,255, 121],
-        darkTone: [0, 4, 131]
-      },
+        lightTone: [34,226,124],
+        darkTone: [18,49,142]
+      }/*,
 
       {
         lightTone: [217,98, 107],
@@ -264,7 +258,7 @@ function initTracker() {
       {
         lightTone: [133,230,244],
         darkTone: [214,2,45]
-      }
+      }*/
 
 
     ]
@@ -276,16 +270,20 @@ function initTracker() {
     var current1 = target1;
     var current2 = target2;
 
-    var stepSize = 0.02;
+    var stepSize = 0.005;
 
     app.ticker.add(function(delta) {
 
       if( Math.round( current1[0] - target1[0] ) !== 0 ) {
 
+				const c1_r = ( target1[0] - current1[0] ) * stepSize;
+				const c1_g = ( target1[1] - current1[1] ) * stepSize;
+				const c1_b = ( target1[2] - current1[2] ) * stepSize;
+
         current1 = [
-          ( target1[0] - current1[0] ) * stepSize + current1[0],
-          ( target1[1] - current1[1] ) * stepSize + current1[1],
-          ( target1[2] - current1[2] ) * stepSize + current1[2]
+          c1_r + current1[0],
+          c1_g + current1[1],
+          c1_b + current1[2]
         ]
 
         current2 = [

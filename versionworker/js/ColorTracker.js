@@ -32,7 +32,7 @@ class ColorTracker {
 		this.worker.postMessage({
 			type: 'init',
 			opts: this.opts,
-			ratio: this.ratio
+			ratio: this.ratio * (this.orignalWidth / window.innerWidth)
 		});
 
     this.colors = [];

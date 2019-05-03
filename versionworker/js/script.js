@@ -230,20 +230,20 @@ function initTracker() {
 
     var circleIndex = 0;
     var circle = [
-      {
-        lightTone: [34,226,181],
-        darkTone: [18,49,142]
+			{
+        lightTone: [0, 193, 251],
+        darkTone: [104, 40, 227]
       },
 
       {
-        lightTone: [0,203,246],
-        darkTone: [0,58,79]
+        lightTone: [243, 82, 113],
+        darkTone: [31, 45, 93]
       },
 
       {
-        lightTone: [34,226,124],
-        darkTone: [18,49,142]
-      }/*,
+        lightTone: [99,255, 121],
+        darkTone: [0, 4, 131]
+      },
 
       {
         lightTone: [217,98, 107],
@@ -258,7 +258,7 @@ function initTracker() {
       {
         lightTone: [133,230,244],
         darkTone: [214,2,45]
-      }*/
+      }
 
 
     ]

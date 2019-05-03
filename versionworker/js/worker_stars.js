@@ -94,7 +94,7 @@ function loop() {
 
  }
 
- ctx.fillStyle = 'black';
+ ctx.fillStyle = 'white';
  ctx.fill();
 
 
@@ -103,7 +103,7 @@ function loop() {
 // 4.1 - 4.5 DRAWING LINES
 
 // 4.1 styling ! map function requires te result of weight and ma, but now it comes before them
-  ctx.strokeStyle = "black";
+  ctx.strokeStyle = "white";
 
 
 // 4.2 link between stars, loop in a loop

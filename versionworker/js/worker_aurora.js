@@ -94,7 +94,7 @@ function loop() {
 
 
 	if(timer < Date.now() - 7000) {
-		timer = Date.now() - 6900;
+		timer = Date.now() - 6960;
 		pts.splice(0, 1);
 	}
 

@@ -15,9 +15,9 @@ let w;
 let h;
 let index = 0;
 const pts = [];
+let timer = Date.now();
 
 const simplex = new SimplexNoise();
-
 
 onmessage = function(evt) {
   if(evt.data.type === 'init') {
@@ -43,6 +43,9 @@ onmessage = function(evt) {
       }
     }
     pts.unshift([left, top, index]);
+
+		timer = Date.now();
+
     index++;
     pts.splice(400);
   }
@@ -64,7 +67,7 @@ function getInterpolationPts(p1, p2, maxDist) {
 
 function loop() {
 	ctx.canvas.width = ctx.canvas.width;
-	
+
 	/*ctx.globalCompositeOperation='source-over';
 	ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	ctx.fillStyle = 'rgba(0,0,0, 0.5)';
@@ -88,6 +91,12 @@ function loop() {
 
     ctx.drawImage(img, xx, yy, ww, hh);
   }
+
+
+	if(timer < Date.now() - 7000) {
+		timer = Date.now() - 6900;
+		pts.splice(0, 1);
+	}
 
 
   requestAnimationFrame(loop);

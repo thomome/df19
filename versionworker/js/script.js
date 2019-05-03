@@ -7,7 +7,7 @@ const effects = {
     color: {
       name: 'yellow',
       threshold: 30,
-      color: [191, 153, 37]
+      color: [232, 190, 56]
     },
     init: (effect) => {
       const img = document.createElement('img');

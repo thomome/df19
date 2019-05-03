@@ -8,6 +8,7 @@ let grd;
 let pat;
 let index = 0;
 let pos = [];
+let timer = Date.now();
 
 onmessage = function(evt) {
   if(evt.data.type === 'init') {
@@ -43,6 +44,7 @@ onmessage = function(evt) {
     }
     if(dist > 100) {
       //pushes them into an array
+			timer = Date.now();
       pts.unshift([left, top, index]);
       pts.splice(30);
       index++;
@@ -72,8 +74,8 @@ function loop() {
     const index = pts2[i][2];
 
     const noise = (simplex.noise2D(0, index * 0.08))*6 + 30;
-    const noiseX = (simplex.noise2D(0, t * index * 0.08)) * 0.1;
-    const noiseY = (simplex.noise2D(20, t * index * 0.08)) * 0.1;
+    const noiseX = (simplex.noise2D(0, t * index * 0.08)) * 0.2;
+    const noiseY = (simplex.noise2D(20, t * index * 0.08)) * 0.2;
 
     const prev = pts2[i - 1];
     const cur1 = pts2[i];
@@ -111,6 +113,12 @@ function loop() {
 
     ctx.lineWidth = noise;
 		ctx.stroke();
+
+
+		if(timer < Date.now() - 7000) {
+			timer = Date.now() - 6900;
+			pts.splice(pts.length - 1, 1);
+		}
   }
 
   requestAnimationFrame(loop);

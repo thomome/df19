@@ -63,7 +63,14 @@ function getInterpolationPts(p1, p2, maxDist) {
 }
 
 function loop() {
-  ctx.canvas.width = ctx.canvas.width;
+	ctx.canvas.width = ctx.canvas.width;
+	
+	/*ctx.globalCompositeOperation='source-over';
+	ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	ctx.fillStyle = 'rgba(0,0,0, 0.5)';
+	ctx.fill();
+
+	ctx.globalCompositeOperation='destination-out';*/
 
   for(let i = 0; i < pts.length; i++) {
 

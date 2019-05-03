@@ -6,16 +6,14 @@ let globalIndex = 0;
 
 
 const lifetime = 3000;
-const starSize = 3;
-const distanceStars = 100;
+const starSize = 5;
+const distanceStars = 150;
 const minDistanceStars = 50;
 
 const killSpeed = starSize * 60 / lifetime;
-//3000 / 60
 
 function add(x, y) {
   const t = Date.now() * 0.001;
-  //const starNoise = (simplex.noise2D(0, t)) * 0.25;
   const starNoise = Math.round((Math.random() - 0.5) * 4);
   const star = starSize + starNoise;
   particles.push({ x: x, y: y, s: star, i: globalIndex })
@@ -27,43 +25,28 @@ onmessage = function(evt) {
   if(evt.data.type === 'init') {
     canvas = evt.data.canvas;
     ctx = canvas.getContext("2d");
-
     loop();
 
-  }
-
-  else if(evt.data.type === 'track'){
+  } else if(evt.data.type === 'track'){
     const rect = evt.data.rects[0].rect;
-
-    //takes from the objects' rect properties the first object
     const x = rect.left;
     const y = rect.top;
 
-//  2° STEP: particles are created
     if(particles.length > 0) {
-
-      // 2.1  get the latest particle
       const lastIndex = particles.length -1;
       const particle = particles[lastIndex];
-
-      // 2.2 calculate distance
       const deltaX = x - particle.x;
       const deltaY = y - particle.y;
       const dist = Math.sqrt( deltaX * deltaX + deltaY * deltaY );
 
-      // 2.3 push particles
       if(dist > minDistanceStars) {
         add(x, y);
       }
-
-  } else {
-
-    add(x, y);
+		} else {
+			add(x, y);
     }
-
-  }// end track
-
-}; // end on message
+  }
+};
 
 
 
@@ -111,7 +94,7 @@ function loop() {
 
  }
 
- ctx.fillStyle = 'white';
+ ctx.fillStyle = 'black';
  ctx.fill();
 
 
@@ -120,66 +103,61 @@ function loop() {
 // 4.1 - 4.5 DRAWING LINES
 
 // 4.1 styling ! map function requires te result of weight and ma, but now it comes before them
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = "black";
 
 
 // 4.2 link between stars, loop in a loop
 
-const linkSums = {}
+	const linkSums = {}
 
-for(let i = 0; i < particles.length; i++) {
+	for(let i = 0; i < particles.length; i++) {
 
-  const p1 = particles[i];
+	  const p1 = particles[i];
 
-  // second loop, starts with the particles that comes after
-  for(let j = i + 1; j < particles.length; j++) {
+	  // second loop, starts with the particles that comes after
+	  for(let j = i + 1; j < particles.length; j++) {
 
-    const p2 = particles[j];
-
-
-// 4.3 calculating distance
-
-    const deltaX = p1.x - p2.x;
-    const deltaY = p1.y - p2.y;
-
-    const dist = Math.sqrt( deltaX * deltaX + deltaY * deltaY );
+	    const p2 = particles[j];
 
 
-    if(dist < distanceStars) {
+	// 4.3 calculating distance
 
-// 4.4 mapping the results
+	    const deltaX = p1.x - p2.x;
+	    const deltaY = p1.y - p2.y;
 
-    // iterate linksum
-    linkSums[i] = linkSums[i] ? linkSums[i] + 1 : 1;
-    linkSums[j] = linkSums[j] ? linkSums[j] + 1 : 1;
-
-    let weight = map(dist, minDistanceStars, distanceStars, 1.5, 0);
-
-      ctx.beginPath();
-      ctx.lineWidth = weight;
-      ctx.moveTo(p1.x, p1.y);
-      ctx.lineTo(p2.x, p2.y);
-      ctx.stroke();
+	    const dist = Math.sqrt( deltaX * deltaX + deltaY * deltaY );
 
 
-    }
+	    if(dist < distanceStars) {
 
-  }
-}
+	// 4.4 mapping the results
+
+	    // iterate linksum
+	    linkSums[i] = linkSums[i] ? linkSums[i] + 1 : 1;
+	    linkSums[j] = linkSums[j] ? linkSums[j] + 1 : 1;
+
+	    let weight = map(dist, minDistanceStars, distanceStars, 1.5, .2);
+
+	      ctx.beginPath();
+	      ctx.lineWidth = weight * Math.min(p1.s / starSize, p2.s / starSize);
+	      ctx.moveTo(p1.x, p1.y);
+	      ctx.lineTo(p2.x, p2.y);
+	      ctx.stroke();
 
 
-// i am not sure how to revert this back to a normal loop
-//for(let i = 0; i < particles.length; i++){
-//const p = particles[i];
+	    }
 
-particles.forEach((p, i) => {
-  if(!linkSums[i] || linkSums[i] < 2) {
-    particles[i].s -= killSpeed;
-    if(particles[i].s <= 0) {
-      particles.splice(i, 1);
-    }
-  }
-});
+	  }
+	}
+
+	particles.forEach((p, i) => {
+	  if(!linkSums[i] || linkSums[i] < 2 || linkSums[i] > 16) {
+	    particles[i].s -= killSpeed;
+	    if(particles[i].s <= 0) {
+	      particles.splice(i, 1);
+	    }
+	  }
+	});
 
   requestAnimationFrame(loop);
 };
